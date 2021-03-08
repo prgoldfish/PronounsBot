@@ -1,6 +1,10 @@
 # PronounsBot
 Un bot Discord pour gérer des pronoms
 
+## Dépendences
+* python-dotenv
+* discord.py
+
 ## Liste des commandes
 * `!aidePronom` : Affiche l'aide
 * `!createPronom [pronom]` : Crée un rôle correspondant à [pronom] (Utilisable seulement par les personnes pouvant gérer des rôles)
