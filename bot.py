@@ -1,29 +1,35 @@
 from dotenv import load_dotenv
 import os
+from pathlib import Path
 import discord
+import logging
 from discord.ext import commands
 
 load_dotenv()
 
 bot = commands.Bot(command_prefix='!')
 
+goldfishMention = '<@!{0}>'.format(os.getenv('GOLDFISH_ID'))
+
+logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(asctime)s [%(levelname)s] : %(filename)s:%(lineno)d %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
+
+async def checkLogSize():
+    if(Path('./bot.log').stat().st_size >= 512 * 1024 * 1024):
+        goldfish = await bot.fetch_user(int(os.getenv('GOLDFISH_ID')))
+        await goldfish.send('Va vider le mon fichier de log !')
+
+
 @bot.event
 async def on_ready():
-    print('Connecté en tant que {0.user}'.format(bot))
+    logging.info('Connecté en tant que %s', bot.user)
+    await checkLogSize()
+    print('Connecté')
 
-""" @client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
-
-    if message.content.startswith('!hello'):
-        await message.channel.send('Hello!')
- """
 
 @bot.command()
 async def test(ctx):
-    print("Reçu")
-    await ctx.send("> Test ok")
+    logging.info('Reçu')
+    await ctx.send('> Test ok.')
 
 @bot.command(name='createPronom')
 async def createPronoun(ctx: commands.Context, *pronouns):
@@ -33,11 +39,12 @@ async def createPronoun(ctx: commands.Context, *pronouns):
     singlePronoun = pronouns[0].capitalize()
     try:
         await ctx.guild.create_role(name='Pronom : {0}'.format(singlePronoun), hoist=False, mentionable=False, reason='Créé le rôle "Pronom : {0}" via le bot'.format(singlePronoun))
-        await ctx.send('> Le rôle `{0}` a été créé'.format(singlePronoun))
+        await ctx.send('> Le rôle `Pronom : {0}` a été créé'.format(singlePronoun))
     except discord.Forbidden:
         await ctx.send('> Problème de permissions du bot pour la création d\'un rôle')
     except (discord.HTTPException, discord.InvalidArgument) as e:
-        await ctx.send('> Erreur lors de la création du rôle\nDétails de l\'erreur : \n`{0}`'.format(e))
+        await ctx.send('> Erreur lors de la création du rôle\n{0}, va régler ça !'.format(goldfishMention))
+        logging.exception('Erreur lors de la création du rôle\nDétails de l\'erreur : \n%s', e)
     
 @bot.command(name='ajoutPronom')
 async def addPronoun(ctx: commands.Context, *pronouns):
@@ -58,7 +65,8 @@ async def addPronoun(ctx: commands.Context, *pronouns):
                 except discord.Forbidden:
                     response += '> Problème de permissions du bot pour l\'assignation d\'un rôle\n'
                 except discord.HTTPException as e:
-                    response += '> Erreur lors de l\'assignation du rôle\nDétails de l\'erreur : \n`{0}`\n'.format(e)    
+                    response += '> Erreur lors de l\'assignation du rôle\n{0}, va régler ça !'.format(goldfishMention)
+                    logging.exception('Erreur lors de l\'assignation du rôle\nDétails de l\'erreur : \n%s', e)
         else:
             response += '> Le pronom `{0}` n\'existe pas en tant que rôle sur le serveur. Demandez à un.e modérateur.ice de l\'ajouter\n'.format(singlePronoun)
     await ctx.send(response)
@@ -82,7 +90,8 @@ async def removePronoun(ctx: commands.Context, *pronouns):
                 except discord.Forbidden:
                     response += '> Problème de permissions du bot pour la suppression d\'un rôle\n'
                 except discord.HTTPException as e:
-                    response += '> Erreur lors de la suppression du rôle\nDétails de l\'erreur : \n`{0}`\n'.format(e)    
+                    response += '> Erreur lors de la suppression du rôle\n{0}, va régler ça !'.format(goldfishMention)
+                    logging.exception('Erreur lors de la suppression du rôle\nDétails de l\'erreur : \n%s', e)
         else:
             response += '> Le pronom `{0}` n\'existe pas en tant que rôle sur le serveur\n'.format(singlePronoun)
     await ctx.send(response)
@@ -93,5 +102,8 @@ async def on_command_error(ctx, error):
         pass
     else:
         print('{0} : {1}'.format(type(error), error))
+        logging.exception('%s : %s', type(error), error)
+
+
 
 bot.run(os.getenv('TOKEN'))
