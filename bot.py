@@ -90,11 +90,11 @@ async def createPronoun(ctx: commands.Context, *pronouns):
     except (discord.HTTPException, discord.InvalidArgument) as e:
         await ctx.send('> Erreur lors de la création du rôle\n{0}, va régler ça !'.format(goldfishMention))
         logging.exception('Erreur lors de la création du rôle\nDétails de l\'erreur : \n%s', e)
-
+""" 
 @createPronoun.error
 async def createPronoun_error(ctx, error):
     if isinstance(error, commands.CheckFailure):
-        await ctx.send('Vous n\'avez pas la permission d\'ajouter des pronoms.')
+        await ctx.send('> Vous n\'avez pas la permission d\'ajouter des pronoms.') """
     
 @bot.command(name='ajoutPronom')
 async def addPronoun(ctx: commands.Context, *pronouns):
@@ -161,7 +161,7 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         pass
     elif isinstance(error, commands.CheckFailure):
-        await ctx.send('> Vous n\'avez la permission d\'utiliser cette commande')
+        await ctx.send('> Vous n\'avez pas la permission d\'utiliser cette commande')
     else:
         print('{0} : {1}'.format(type(error), error))
         logging.exception('%s : %s', type(error), error)
