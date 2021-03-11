@@ -150,7 +150,7 @@ async def removePronoun(ctx: commands.Context, *pronouns):
 async def help(ctx, *args):
     response = '> `!aidePronom` Affiche cette aide\n'
     response += '> `!createPronom [pronom]` Crée un rôle correspondant à [pronom] (Utilisable seulement par les personnes pouvant gérer des rôles)\n'
-    response += '> `!installerPronoms [pronom]` Installe une liste prédéfinie de pronoms (Utilisable seulement par les personnes pouvant gérer des rôles)\n'
+    response += '> `!installerPronoms` Installe une liste prédéfinie de pronoms (Utilisable seulement par les personnes pouvant gérer des rôles)\n'
     response += '> `!ajoutPronom [pronom1] [pronom2] ...` Vous ajoute les rôles correspondant aux pronoms renseignés (si ces rôles existent)\n'
     response += '> `!enleverPronom [pronom1] [pronom2] ...` Vous enlève les rôles correspondant aux pronoms renseignés (si ces rôles existent)\n'
     await ctx.send(response)
