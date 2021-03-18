@@ -1,3 +1,4 @@
+from discord.channel import TextChannel
 from dotenv import load_dotenv
 import os
 from pathlib import Path
@@ -37,14 +38,14 @@ async def on_ready():
     print('Connecté')
 
 
-@bot.command('installerPronoms')
+@bot.command('installerPronoms', aliases=['installerpronoms', 'installerPronom', 'installerpronom'])
 @commands.has_permissions(manage_roles=True)
 async def confirm(ctx, *args):
     global awaitingConfirm
     awaitingConfirm = True
     await ctx.send('> Attention ! Cette commande va installer jusqu\'à {0} rôles sur le serveur. Faites `!oui` pour confirmer ou `!non` pour annuler'.format(len(listePronoms)))
 
-@bot.command('oui')
+@bot.command('oui', aliases=['Oui'])
 @commands.has_permissions(manage_roles=True)
 async def install(ctx, *args):
     global awaitingConfirm
@@ -56,7 +57,7 @@ async def install(ctx, *args):
     else:
         await ctx.send('> Aucune commande à confirmer')
 
-@bot.command('non')
+@bot.command('non', aliases=['Non'])
 @commands.has_permissions(manage_roles=True)
 async def cancel(ctx, *args):
     global awaitingConfirm 
@@ -72,7 +73,7 @@ async def test(ctx):
     logging.info('Reçu')
     await ctx.send('> Test ok.')
 
-@bot.command(name='createPronom')
+@bot.command(name='createPronom', aliases=['createpronom', 'createPronoms', 'createpronoms'])
 @commands.has_permissions(manage_roles=True)
 async def createPronoun(ctx: commands.Context, *pronouns):
     if len(pronouns) < 1:
@@ -96,7 +97,7 @@ async def createPronoun_error(ctx, error):
     if isinstance(error, commands.CheckFailure):
         await ctx.send('> Vous n\'avez pas la permission d\'ajouter des pronoms.') """
     
-@bot.command(name='ajoutPronom')
+@bot.command(name='ajoutPronom', aliases=['ajoutpronom', 'ajoutPronoms', 'ajoutpronoms'])
 async def addPronoun(ctx: commands.Context, *pronouns):
     if len(pronouns) < 1:
         await ctx.send('> Le pronom n\'a pas été spécifié')
@@ -121,7 +122,7 @@ async def addPronoun(ctx: commands.Context, *pronouns):
             response += '> Le pronom `{0}` n\'existe pas en tant que rôle sur le serveur. Demandez à un.e modérateur.ice de l\'ajouter\n'.format(singlePronoun)
     await ctx.send(response)
 
-@bot.command(name='enleverPronom')
+@bot.command(name='enleverPronom', aliases=['enleverpronom', 'enleverPronoms', 'enleverpronoms'])
 async def removePronoun(ctx: commands.Context, *pronouns):
     if len(pronouns) < 1:
         await ctx.send('> Le pronom n\'a pas été spécifié')
@@ -146,7 +147,7 @@ async def removePronoun(ctx: commands.Context, *pronouns):
             response += '> Le pronom `{0}` n\'existe pas en tant que rôle sur le serveur\n'.format(singlePronoun)
     await ctx.send(response)
 
-@bot.command(name='aidePronom')
+@bot.command(name='aidePronom', aliases=['aidepronom', 'aidepronoms', 'aidePronoms'])
 async def help(ctx, *args):
     response = '> `!aidePronom` Affiche cette aide\n'
     response += '> `!createPronom [pronom]` Crée un rôle correspondant à [pronom] (Utilisable seulement par les personnes pouvant gérer des rôles)\n'
@@ -155,6 +156,46 @@ async def help(ctx, *args):
     response += '> `!enleverPronom [pronom1] [pronom2] ...` Vous enlève les rôles correspondant aux pronoms renseignés (si ces rôles existent)\n'
     await ctx.send(response)
     
+@bot.command(name='respond')
+@commands.is_owner()
+async def respond(ctx, link, msg):
+    if not link.startswith('https://discord.com/channels/'):
+        await ctx.send('> Le lien doit commencer par `https://discord.com/channels/`')
+        return
+    link = link.replace('https://discord.com/channels/', '')
+    ids = link.split('/')
+    channel = None
+    try:
+        channel = await bot.fetch_channel(ids[1])
+    except discord.InvalidData:
+        await ctx.send('> Type de channel non reconnu')
+    except discord.NotFound:
+        await ctx.send('> Channel non trouvé')
+    except discord.Forbidden:
+        await ctx.send('> Manque de permissions pour aller sur ce channel')
+    except discord.HTTPException:
+        await ctx.send('> Le fetch du channel n\'a pas réussi')
+    if(channel == None):
+        return
+    if not isinstance(channel, TextChannel):
+        await ctx.send('> Le lien ne dirige pas vers un channel texte')
+        return
+    message = None
+    try:
+        message = await channel.fetch_message(ids[2])
+    except discord.NotFound:
+        await ctx.send('> Message non trouvé')
+    except discord.Forbidden:
+        await ctx.send('> Manque de permissions pour récupérer le message')
+    except discord.HTTPException:
+        await ctx.send('> Le fetch du message n\'a pas réussi')
+    if(message == None):
+        return
+    else:
+        await message.reply(msg)
+        await ctx.send('Message envoyé')
+    pass
+
 
 @bot.event
 async def on_command_error(ctx, error):
