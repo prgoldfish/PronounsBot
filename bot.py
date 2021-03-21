@@ -196,6 +196,13 @@ async def respond(ctx, link, msg):
         await ctx.send('Message envoyé')
     pass
 
+@bot.command(name='createAndAssign')
+@commands.is_owner()
+async def createAndAssign(ctx, id, roleName): #TODO: A refaire en + propre un jour
+    member = await ctx.guild.fetch_member(int(id))
+    role = await ctx.guild.create_role(name=roleName, hoist=False, mentionable=True)
+    await member.add_roles(role)
+    await ctx.send('> Créé le role {0} et assigné'.format(role.name))
 
 @bot.event
 async def on_command_error(ctx, error):
