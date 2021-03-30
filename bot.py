@@ -10,7 +10,7 @@ listePronoms = ('il', 'elle', 'iel', 'yel', 'ielle', 'al', 'ol', 'olle', 'ul', '
 
 load_dotenv()
 
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='!', help_command=None)
 
 goldfishMention = '<@!{0}>'.format(os.getenv('GOLDFISH_ID'))
 
@@ -218,7 +218,5 @@ async def on_command_error(ctx, error):
 
 bot.run(os.getenv('TOKEN'))
 
-#TODO: Faire permissions pour les commandes -ok
-#TODO: Package de base de pronoms + installation en 1 commande -ok
 #TODO: Ecoute sur un channel précis ?
 #TODO: Commandes inutiles/débiles
