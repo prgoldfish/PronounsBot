@@ -147,7 +147,7 @@ async def removePronoun(ctx: commands.Context, *pronouns):
             response += '> Le pronom `{0}` n\'existe pas en tant que rôle sur le serveur\n'.format(singlePronoun)
     await ctx.send(response)
 
-@bot.command(name='aidePronom', aliases=['aidepronom', 'aidepronoms', 'aidePronoms'])
+@bot.command(name='aidePronom', aliases=['aidepronom', 'aidepronoms', 'aidePronoms', 'help'])
 async def help(ctx, *args):
     response = '> `!aidePronom` Affiche cette aide\n'
     response += '> `!createPronom [pronom]` Crée un rôle correspondant à [pronom] (Utilisable seulement par les personnes pouvant gérer des rôles)\n'
