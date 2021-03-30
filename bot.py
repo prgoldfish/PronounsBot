@@ -10,7 +10,7 @@ listePronoms = ('il', 'elle', 'iel', 'yel', 'ielle', 'al', 'ol', 'olle', 'ul', '
 
 load_dotenv()
 
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='!', help_command=None)
 
 goldfishMention = '<@!{0}>'.format(os.getenv('GOLDFISH_ID'))
 
@@ -147,7 +147,7 @@ async def removePronoun(ctx: commands.Context, *pronouns):
             response += '> Le pronom `{0}` n\'existe pas en tant que rôle sur le serveur\n'.format(singlePronoun)
     await ctx.send(response)
 
-@bot.command(name='aidePronom', aliases=['aidepronom', 'aidepronoms', 'aidePronoms'])
+@bot.command(name='aidePronom', aliases=['aidepronom', 'aidepronoms', 'aidePronoms', 'help'])
 async def help(ctx, *args):
     response = '> `!aidePronom` Affiche cette aide\n'
     response += '> `!createPronom [pronom]` Crée un rôle correspondant à [pronom] (Utilisable seulement par les personnes pouvant gérer des rôles)\n'
@@ -218,7 +218,5 @@ async def on_command_error(ctx, error):
 
 bot.run(os.getenv('TOKEN'))
 
-#TODO: Faire permissions pour les commandes -ok
-#TODO: Package de base de pronoms + installation en 1 commande -ok
 #TODO: Ecoute sur un channel précis ?
 #TODO: Commandes inutiles/débiles
